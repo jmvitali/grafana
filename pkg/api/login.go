@@ -27,6 +27,7 @@ func LoginView(c *middleware.Context) {
 	settings := c.Data["Settings"].(map[string]interface{})
 	settings["googleAuthEnabled"] = setting.OAuthService.Google
 	settings["githubAuthEnabled"] = setting.OAuthService.GitHub
+	settings["cerberusAuthEnabled"] = setting.OAuthService.Cerberus
 	settings["disableUserSignUp"] = !setting.AllowUserSignUp
 
 	if !tryLoginUsingRememberCookie(c) {
