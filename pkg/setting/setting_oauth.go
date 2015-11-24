@@ -4,12 +4,11 @@ type OAuthInfo struct {
 	ClientId, ClientSecret string
 	Scopes                 []string
 	AuthUrl, TokenUrl      string
-    ReqTokenUrl            string
+    AllowInsecureCert      bool
 	Enabled                bool
 	AllowedDomains         []string
 	ApiUrl                 string
 	AllowSignup            bool
-    AutoSignUp             bool
 }
 
 type OAuther struct {
