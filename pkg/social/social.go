@@ -410,7 +410,7 @@ func (s *SocialCerberus) IsSignupAllowed() bool {
 
 func (s *SocialCerberus) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 	var data struct {
-		Id    string `json:"id"`
+		Id    string `json:"login"`
 		Name  string `json:"name"`
 		Email string `json:"email"`
 	}
