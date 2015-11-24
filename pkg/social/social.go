@@ -63,6 +63,10 @@ func NewOAuthService() {
 			continue
 		}
 
+		if name == "cerberus" {
+            info.AutoSignUp = sec.Key("auto_sign_up").MustBool()
+            info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
+        }
         
 		setting.OAuthService.OAuthInfos[name] = info
 		config := oauth2.Config{
@@ -78,15 +82,11 @@ func NewOAuthService() {
 
         // Cerberus.
 		if name == "cerberus" {
-            info.ReqTokenUrl = sec.Key("access_token_url").String()
-            info.AutoSignUp = sec.Key("auto_sign_up").MustBool()
             setting.OAuthService.Cerberus = true
             SocialMap["cerberus"] = &SocialCerberus{
 				Config:               &config,
 				apiUrl:               info.ApiUrl,
-				RequestTokenUrl:      info.ReqTokenUrl,
 				allowSignup:          info.AllowSignup,
-				autoSignup:           info.AutoSignUp,
 			}
             
             log.Trace("Cerberus configuration loaded!")
@@ -387,16 +387,14 @@ func (s *SocialGoogle) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 ////////////
 // Cerberus
 ////////////
+
 type SocialCerberus struct {
 	*oauth2.Config
 	allowedDomains       []string
 	allowedOrganizations []string
 	apiUrl               string
-	RequestTokenUrl      string
 	allowSignup          bool
-    autoSignup           bool
 }
-
 
 func (s *SocialCerberus) Type() int {
 	return int(models.CERBERUS)
@@ -410,10 +408,6 @@ func (s *SocialCerberus) IsSignupAllowed() bool {
 	return s.allowSignup
 }
 
-func (s *SocialCerberus) IsAutomaticSignup() bool {
-	return s.autoSignup
-}
-
 func (s *SocialCerberus) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 	var data struct {
 		Id    string `json:"id"`
@@ -424,6 +418,7 @@ func (s *SocialCerberus) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 
 	client := s.Client(oauth2.NoContext, token)
 	r, err := client.Get(s.apiUrl)
+	
 	if err != nil {
 		return nil, err
 	}
@@ -437,3 +432,4 @@ func (s *SocialCerberus) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 		Email:    data.Email,
 	}, nil
 }
+
