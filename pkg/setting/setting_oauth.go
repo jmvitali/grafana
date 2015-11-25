@@ -9,7 +9,6 @@ type OAuthInfo struct {
 	AllowedDomains         []string
 	ApiUrl                 string
 	AllowSignup            bool
-    AutoSignUp             bool
 }
 
 type OAuther struct {

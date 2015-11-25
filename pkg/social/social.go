@@ -63,12 +63,6 @@ func NewOAuthService() {
 			continue
 		}
 
-		if name == "cerberus" {
-            info.AutoSignUp = sec.Key("auto_sign_up").MustBool()
-            info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
-        }
-        
-		setting.OAuthService.OAuthInfos[name] = info
 		config := oauth2.Config{
 			ClientID:     info.ClientId,
 			ClientSecret: info.ClientSecret,
@@ -82,6 +76,7 @@ func NewOAuthService() {
 
         // Cerberus.
 		if name == "cerberus" {
+            info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
             setting.OAuthService.Cerberus = true
             SocialMap["cerberus"] = &SocialCerberus{
 				Config:               &config,
@@ -90,7 +85,9 @@ func NewOAuthService() {
 			}
             
             log.Trace("Cerberus configuration loaded!")
-        }        
+        }
+
+        setting.OAuthService.OAuthInfos[name] = info
         
 		// GitHub.
 		if name == "github" {

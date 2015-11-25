@@ -73,7 +73,14 @@ func RoleAuth(roles ...m.RoleType) macaron.Handler {
 
 func Auth(options *AuthOptions) macaron.Handler {
 	return func(c *Context) {
+
 		if !c.IsSignedIn && options.ReqSignedIn && !c.AllowAnonymous {
+			// Auto Login with Auth name configured
+			if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != ""{
+				c.SetCookie("redirect_to", url.QueryEscape(setting.AppSubUrl+c.Req.RequestURI), 0, setting.AppSubUrl+"/")
+	 			c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
+	 		}
+
 			notAuthorized(c)
 			return
 		}
