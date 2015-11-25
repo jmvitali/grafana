@@ -126,5 +126,13 @@ func OAuthLogin(ctx *middleware.Context) {
 
 	metrics.M_Api_Login_OAuth.Inc(1)
 
+	// If redirect to Cookie is defined, then redirect to this uri instead of home page
+	if redirectTo, _ := url.QueryUnescape(ctx.GetCookie("redirect_to")); len(redirectTo) > 0 {
+		ctx.SetCookie("redirect_to", "", -1, setting.AppSubUrl+"/")
+		ctx.Redirect(redirectTo)
+		return
+	}
+
+
 	ctx.Redirect(setting.AppSubUrl + "/")
 }

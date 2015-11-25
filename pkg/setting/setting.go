@@ -125,6 +125,10 @@ var (
 	LdapEnabled    bool
 	LdapConfigFile string
 
+	// Auth Auto Sign Up
+	AuthAutoSignUpEnabled bool
+	AuthAutoSignUpName string
+
 	// SMTP email settings
 	Smtp SmtpSettings
 
@@ -458,6 +462,10 @@ func NewConfigContext(args *CommandLineArgs) error {
 	ldapSec := Cfg.Section("auth.ldap")
 	LdapEnabled = ldapSec.Key("enabled").MustBool(false)
 	LdapConfigFile = ldapSec.Key("config_file").String()
+
+	authAutoSignUpSec := Cfg.Section("auth.auto_sign_up")
+	AuthAutoSignUpEnabled = authAutoSignUpSec.Key("enabled").MustBool(false)
+	AuthAutoSignUpName = authAutoSignUpSec.Key("auth_name").String()
 
 	readSessionConfig()
 	readSmtpSettings()
