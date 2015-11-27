@@ -43,7 +43,11 @@ func accessForbidden(c *Context) {
 	}
 
 	c.SetCookie("redirect_to", url.QueryEscape(setting.AppSubUrl+c.Req.RequestURI), 0, setting.AppSubUrl+"/")
-	c.Redirect(setting.AppSubUrl + "/login")
+	if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != "" {
+		c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
+	} else {
+		c.Redirect(setting.AppSubUrl + "/login")
+	}
 }
 
 func notAuthorized(c *Context) {
@@ -53,7 +57,11 @@ func notAuthorized(c *Context) {
 	}
 
 	c.SetCookie("redirect_to", url.QueryEscape(setting.AppSubUrl+c.Req.RequestURI), 0, setting.AppSubUrl+"/")
-	c.Redirect(setting.AppSubUrl + "/login")
+	if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != "" {
+		c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
+	} else {
+		c.Redirect(setting.AppSubUrl + "/login")
+	}
 }
 
 func RoleAuth(roles ...m.RoleType) macaron.Handler {
