@@ -4,6 +4,7 @@ type OAuthInfo struct {
 	ClientId, ClientSecret string
 	Scopes                 []string
 	AuthUrl, TokenUrl      string
+    AllowInsecureCert      bool
 	Enabled                bool
 	AllowedDomains         []string
 	ApiUrl                 string
@@ -11,7 +12,7 @@ type OAuthInfo struct {
 }
 
 type OAuther struct {
-	GitHub, Google, Twitter bool
+	GitHub, Google, Twitter, Cerberus bool
 	OAuthInfos              map[string]*OAuthInfo
 }
 

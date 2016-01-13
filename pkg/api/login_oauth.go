@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-
+	"net/http"
+    "crypto/tls"
 	"golang.org/x/oauth2"
 
 	"github.com/grafana/grafana/pkg/bus"
@@ -33,7 +34,27 @@ func OAuthLogin(ctx *middleware.Context) {
 	if code == "" {
 		ctx.Redirect(connect.AuthCodeURL("", oauth2.AccessTypeOnline))
 		return
-	}
+	}    
+
+    // Retrieve OAuth information
+    info := setting.OAuthService.OAuthInfos[name]
+    
+    // Insecured certificat is allowed
+    if info.AllowInsecureCert {
+		cfg := &tls.Config{
+			InsecureSkipVerify: true,
+		}
+
+		http.DefaultClient.Transport = &http.Transport{
+			TLSClientConfig: cfg,
+		}
+
+		// Register Token URL as Broken Auth Header Provider
+		//   i.e.: Server which imnplements Auth Spec correctly    
+		oauth2.RegisterBrokenAuthHeaderProvider(info.TokenUrl) 
+    }
+
+   
 
 	// handle call back
 	token, err := connect.Exchange(oauth2.NoContext, code)
@@ -104,6 +125,14 @@ func OAuthLogin(ctx *middleware.Context) {
 	loginUserWithUser(userQuery.Result, ctx)
 
 	metrics.M_Api_Login_OAuth.Inc(1)
+
+	// If redirect to Cookie is defined, then redirect to this uri instead of home page
+	if redirectTo, _ := url.QueryUnescape(ctx.GetCookie("redirect_to")); len(redirectTo) > 0 {
+		ctx.SetCookie("redirect_to", "", -1, setting.AppSubUrl+"/")
+		ctx.Redirect(redirectTo)
+		return
+	}
+
 
 	ctx.Redirect(setting.AppSubUrl + "/")
 }

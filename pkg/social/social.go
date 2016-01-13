@@ -13,6 +13,7 @@ import (
 	"golang.org/x/net/context"
 
 	"golang.org/x/oauth2"
+    "github.com/grafana/grafana/pkg/log"
 )
 
 type BasicUserInfo struct {
@@ -42,7 +43,7 @@ func NewOAuthService() {
 	setting.OAuthService = &setting.OAuther{}
 	setting.OAuthService.OAuthInfos = make(map[string]*setting.OAuthInfo)
 
-	allOauthes := []string{"github", "google"}
+	allOauthes := []string{"github", "google", "cerberus"}
 
 	for _, name := range allOauthes {
 		sec := setting.Cfg.Section("auth." + name)
@@ -62,7 +63,6 @@ func NewOAuthService() {
 			continue
 		}
 
-		setting.OAuthService.OAuthInfos[name] = info
 		config := oauth2.Config{
 			ClientID:     info.ClientId,
 			ClientSecret: info.ClientSecret,
@@ -74,6 +74,21 @@ func NewOAuthService() {
 			Scopes:      info.Scopes,
 		}
 
+        // Cerberus.
+		if name == "cerberus" {
+            info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
+            setting.OAuthService.Cerberus = true
+            SocialMap["cerberus"] = &SocialCerberus{
+				Config:               &config,
+				apiUrl:               info.ApiUrl,
+				allowSignup:          info.AllowSignup,
+			}
+            
+            log.Trace("Cerberus configuration loaded!")
+        }
+
+        setting.OAuthService.OAuthInfos[name] = info
+        
 		// GitHub.
 		if name == "github" {
 			setting.OAuthService.GitHub = true
@@ -364,3 +379,54 @@ func (s *SocialGoogle) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
 		Email:    data.Email,
 	}, nil
 }
+
+
+////////////
+// Cerberus
+////////////
+
+type SocialCerberus struct {
+	*oauth2.Config
+	allowedDomains       []string
+	allowedOrganizations []string
+	apiUrl               string
+	allowSignup          bool
+}
+
+func (s *SocialCerberus) Type() int {
+	return int(models.CERBERUS)
+}
+
+func (s *SocialCerberus) IsEmailAllowed(email string) bool {
+	return isEmailAllowed(email, s.allowedDomains)
+}
+
+func (s *SocialCerberus) IsSignupAllowed() bool {
+	return s.allowSignup
+}
+
+func (s *SocialCerberus) UserInfo(token *oauth2.Token) (*BasicUserInfo, error) {
+	var data struct {
+		Id    string `json:"login"`
+		Name  string `json:"name"`
+		Email string `json:"email"`
+	}
+	var err error
+
+	client := s.Client(oauth2.NoContext, token)
+	r, err := client.Get(s.apiUrl)
+	
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+	if err = json.NewDecoder(r.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+	return &BasicUserInfo{
+		Identity: data.Id,
+		Name:     data.Name,
+		Email:    data.Email,
+	}, nil
+}
+

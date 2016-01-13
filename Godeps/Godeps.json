@@ -145,7 +145,7 @@
 		},
 		{
 			"ImportPath": "golang.org/x/oauth2",
-			"Rev": "c58fcf0ffc1c772aa2e1ee4894bc19f2649263b2"
+			"Rev": "442624c9ec9243441e83b374a9e22ac549b5c51d"
 		},
 		{
 			"ImportPath": "gopkg.in/asn1-ber.v1",
