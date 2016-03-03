@@ -30,16 +30,20 @@ type CurrentUser struct {
 }
 
 type DashboardMeta struct {
-	IsStarred  bool      `json:"isStarred,omitempty"`
-	IsHome     bool      `json:"isHome,omitempty"`
-	IsSnapshot bool      `json:"isSnapshot,omitempty"`
-	Type       string    `json:"type,omitempty"`
-	CanSave    bool      `json:"canSave"`
-	CanEdit    bool      `json:"canEdit"`
-	CanStar    bool      `json:"canStar"`
-	Slug       string    `json:"slug"`
-	Expires    time.Time `json:"expires"`
-	Created    time.Time `json:"created"`
+	IsStarred   bool      `json:"isStarred,omitempty"`
+	IsHome      bool      `json:"isHome,omitempty"`
+	IsSnapshot  bool      `json:"isSnapshot,omitempty"`
+	Type        string    `json:"type,omitempty"`
+	CanSave     bool      `json:"canSave"`
+	CanEdit     bool      `json:"canEdit"`
+	CanStar     bool      `json:"canStar"`
+	Slug        string    `json:"slug"`
+	Expires     time.Time `json:"expires"`
+	Created     time.Time `json:"created"`
+	Updated     time.Time `json:"updated"`
+	AuthorId    int64     `json:"authorId"`
+	AuthorName  string    `json:"authorName"`
+	AuthorEmail string    `json:"authorEmail"`
 }
 
 type DashboardFullWithMeta struct {
@@ -60,6 +64,7 @@ type DataSource struct {
 	BasicAuth         bool                   `json:"basicAuth"`
 	BasicAuthUser     string                 `json:"basicAuthUser"`
 	BasicAuthPassword string                 `json:"basicAuthPassword"`
+	WithCredentials   bool                   `json:"withCredentials"`
 	IsDefault         bool                   `json:"isDefault"`
 	JsonData          map[string]interface{} `json:"jsonData"`
 }

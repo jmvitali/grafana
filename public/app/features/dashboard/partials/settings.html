@@ -38,13 +38,24 @@
 					</ul>
 					<div class="clearfix"></div>
 				</div>
-				<div class="tight-form last">
+				<div class="tight-form">
 					<ul class="tight-form-list">
 						<li class="tight-form-item" style="width: 90px">
 							Timezone
 						</li>
 						<li>
 							<select ng-model="dashboard.timezone" class='input-small tight-form-input' ng-options="f for f in ['browser','utc']"></select>
+						</li>
+					</ul>
+					<div class="clearfix"></div>
+				</div>
+				<div class="tight-form last">
+					<ul class="tight-form-list">
+						<li class="tight-form-item" style="width: 90px">
+							Created by
+						</li>
+						<li class="tight-form-item">
+							{{dashboardMeta.authorName}} ({{dashboardMeta.authorEmail}})
 						</li>
 					</ul>
 					<div class="clearfix"></div>

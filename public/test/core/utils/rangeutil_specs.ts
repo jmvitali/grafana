@@ -41,12 +41,12 @@ describe("rangeUtil", () => {
 
     it('should handle now/d', () => {
       var info = rangeUtil.describeTextRange('now/d');
-      expect(info.display).to.be('The day so far');
+      expect(info.display).to.be('Today so far');
     });
 
     it('should handle now/w', () => {
       var info = rangeUtil.describeTextRange('now/w');
-      expect(info.display).to.be('Week to date');
+      expect(info.display).to.be('This week so far');
     });
   });
 
@@ -80,6 +80,22 @@ describe("rangeUtil", () => {
       var text = rangeUtil.describeTimeRange({from: 'now-13h', to: 'now'});
       expect(text).to.be('Last 13 hours')
     });
+
+    it('Date range with from and to both are in now-* format', () => {
+      var text = rangeUtil.describeTimeRange({from: 'now-6h', to: 'now-3h'});
+      expect(text).to.be('now-6h to now-3h')
+    });
+
+    it('Date range with from and to both are either in now-* or now/* format', () => {
+      var text = rangeUtil.describeTimeRange({from: 'now/d+6h', to: 'now-3h'});
+      expect(text).to.be('now/d+6h to now-3h')
+    });
+
+    it('Date range with from and to both are either in now-* or now+* format', () => {
+      var text = rangeUtil.describeTimeRange({from: 'now-6h', to: 'now+1h'});
+      expect(text).to.be('now-6h to now+1h')
+    });
+
   });
 
 });
