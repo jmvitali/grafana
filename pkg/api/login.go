@@ -29,6 +29,7 @@ func LoginView(c *middleware.Context) {
 	settings["githubAuthEnabled"] = setting.OAuthService.GitHub
 	settings["cerberusAuthEnabled"] = setting.OAuthService.Cerberus
 	settings["disableUserSignUp"] = !setting.AllowUserSignUp
+	settings["loginHint"] = setting.LoginHint
 
 	if !tryLoginUsingRememberCookie(c) {
 		c.HTML(200, VIEW_INDEX)

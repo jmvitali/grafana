@@ -19,6 +19,7 @@ function (angular, coreModule, config) {
     $scope.githubAuthEnabled = config.githubAuthEnabled;
     $scope.cerberusAuthEnabled = config.cerberusAuthEnabled;
     $scope.disableUserSignUp = config.disableUserSignUp;
+    $scope.loginHint     = config.loginHint;
 
     $scope.loginMode = true;
     $scope.submitBtnText = 'Log in';

@@ -208,7 +208,7 @@ func (s *SocialGithub) FetchPrivateEmail(client *http.Client) (string, error) {
 		Verified bool   `json:"verified"`
 	}
 
-	emailsUrl := fmt.Sprintf("https://api.github.com/user/emails")
+	emailsUrl := fmt.Sprintf(s.apiUrl + "/emails")
 	r, err := client.Get(emailsUrl)
 	if err != nil {
 		return "", err
@@ -237,7 +237,7 @@ func (s *SocialGithub) FetchTeamMemberships(client *http.Client) ([]int, error) 
 		Id int `json:"id"`
 	}
 
-	membershipUrl := fmt.Sprintf("https://api.github.com/user/teams")
+	membershipUrl := fmt.Sprintf(s.apiUrl + "/teams")
 	r, err := client.Get(membershipUrl)
 	if err != nil {
 		return nil, err
@@ -264,7 +264,7 @@ func (s *SocialGithub) FetchOrganizations(client *http.Client) ([]string, error)
 		Login string `json:"login"`
 	}
 
-	url := fmt.Sprintf("https://api.github.com/user/orgs")
+	url := fmt.Sprintf(s.apiUrl + "/orgs")
 	r, err := client.Get(url)
 	if err != nil {
 		return nil, err

@@ -14,6 +14,7 @@ func addDashboardMigration(mg *Migrator) {
 			{Name: "account_id", Type: DB_BigInt, Nullable: false},
 			{Name: "created", Type: DB_DateTime, Nullable: false},
 			{Name: "updated", Type: DB_DateTime, Nullable: false},
+			{Name: "author_id", Type: DB_BigInt, Nullable: false},
 		},
 		Indices: []*Index{
 			{Cols: []string{"account_id"}},
@@ -62,6 +63,7 @@ func addDashboardMigration(mg *Migrator) {
 			{Name: "org_id", Type: DB_BigInt, Nullable: false},
 			{Name: "created", Type: DB_DateTime, Nullable: false},
 			{Name: "updated", Type: DB_DateTime, Nullable: false},
+			{Name: "author_id", Type: DB_BigInt, Nullable: false},
 		},
 		Indices: []*Index{
 			{Cols: []string{"org_id"}},
@@ -75,14 +77,15 @@ func addDashboardMigration(mg *Migrator) {
 	addTableIndicesMigrations(mg, "v2", dashboardV2)
 	// copy data
 	mg.AddMigration("copy dashboard v1 to v2", NewCopyTableDataMigration("dashboard", "dashboard_v1", map[string]string{
-		"id":      "id",
-		"version": "version",
-		"slug":    "slug",
-		"title":   "title",
-		"data":    "data",
-		"org_id":  "account_id",
-		"created": "created",
-		"updated": "updated",
+		"id":        "id",
+		"version":   "version",
+		"slug":      "slug",
+		"title":     "title",
+		"data":      "data",
+		"org_id":    "account_id",
+		"created":   "created",
+		"updated":   "updated",
+		"author_id": "author_id",
 	}))
 
 	mg.AddMigration("drop table dashboard_v1", NewDropTableMigration("dashboard_v1"))
