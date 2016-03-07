@@ -13,6 +13,7 @@ var (
 	ErrDashboardNotFound           = errors.New("Dashboard not found")
 	ErrDashboardSnapshotNotFound   = errors.New("Dashboard snapshot not found")
 	ErrDashboardWithSameNameExists = errors.New("A dashboard with the same name already exists")
+	ErrDashboardCannotBeOverridded = errors.New("You are not authorized to override this existing dashboard")
 	ErrDashboardVersionMismatch    = errors.New("The dashboard has been changed by someone else")
 )
 
@@ -115,6 +116,7 @@ type SaveDashboardCommand struct {
 	Dashboard   map[string]interface{} `json:"dashboard" binding:"Required"`
 	Overwrite   bool                   `json:"overwrite"`
 	OrgId       int64                  `json:"-"`
+	SignedInUId int64                  `json:"-"`
 	AuthorId    int64                  `json:"authorId"`
 	AuthorName  string                 `json:"authorName"`
 	AuthorEmail string                 `json:"authorEmail"`

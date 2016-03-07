@@ -102,6 +102,7 @@ func DeleteDashboard(c *middleware.Context) {
 
 func PostDashboard(c *middleware.Context, cmd m.SaveDashboardCommand) {
 	cmd.OrgId = c.OrgId
+	cmd.SignedInUId= c.UserId
 
 	dash := cmd.GetDashboardModel()
 	if dash.Id == 0 {
@@ -120,6 +121,7 @@ func PostDashboard(c *middleware.Context, cmd m.SaveDashboardCommand) {
 	}
 
 	err := bus.Dispatch(&cmd)
+
 	if err != nil {
 		if err == m.ErrDashboardWithSameNameExists {
 			c.JSON(412, util.DynMap{"status": "name-exists", "message": err.Error()})
@@ -133,6 +135,10 @@ func PostDashboard(c *middleware.Context, cmd m.SaveDashboardCommand) {
 			c.JSON(404, util.DynMap{"status": "not-found", "message": err.Error()})
 			return
 		}
+		if err == m.ErrDashboardCannotBeOverridded {
+			c.JSON(403, util.DynMap{"status": "cannot-override", "message": err.Error()})
+			return
+		}		
 		c.JsonApiErr(500, "Failed to save dashboard", err)
 		return
 	}
