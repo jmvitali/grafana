@@ -53,7 +53,9 @@ func SaveDashboard(cmd *m.SaveDashboardCommand) error {
 		if sameTitleExists {
 			// another dashboard with same name
 			if dash.Id != sameTitle.Id {
-				if cmd.Overwrite {
+				if cmd.SignedInUId != sameTitle.AuthorId && sameTitle.Data["editable"] == false {
+					return m.ErrDashboardCannotBeOverridded
+				} else if cmd.Overwrite {
 					dash.Id = sameTitle.Id
 				} else {
 					return m.ErrDashboardWithSameNameExists
