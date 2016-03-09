@@ -37,6 +37,7 @@ type DashboardMeta struct {
 	CanSave     bool      `json:"canSave"`
 	CanEdit     bool      `json:"canEdit"`
 	CanStar     bool      `json:"canStar"`
+	CanDelete   bool      `json:"canDelete"`	
 	Slug        string    `json:"slug"`
 	Expires     time.Time `json:"expires"`
 	Created     time.Time `json:"created"`
