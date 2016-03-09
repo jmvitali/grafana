@@ -8,13 +8,14 @@ function (angular, $, _, moment) {
   'use strict';
 
   var module = angular.module('grafana.services');
-
   module.factory('dashboardSrv', function()  {
 
-    function DashboardModel (data, meta) {
+    function DashboardModel (data, meta, contextSrv) {
       if (!data) {
         data = {};
       }
+
+      this.signedInUser = contextSrv.user;
 
       if (!data.id && data.version) {
         data.schemaVersion = data.version;
@@ -52,8 +53,10 @@ function (angular, $, _, moment) {
       meta.canSave = meta.canSave !== false;
       meta.canStar = meta.canStar !== false;
       meta.canEdit = meta.canEdit !== false;
+      meta.canDelete = meta.canDelete !== false;
 
-      if (!this.editable) {
+      // authorize dashboard author to edit his/her own not editable dashboard
+      if (!this.editable && (this.signedInUser.id !== meta.authorId)) {
         meta.canEdit = false;
         meta.canDelete = false;
         meta.canSave = false;
@@ -400,8 +403,8 @@ function (angular, $, _, moment) {
     };
 
     return {
-      create: function(dashboard, meta) {
-        return new DashboardModel(dashboard, meta);
+      create: function(dashboard, meta, contextSrv) {
+        return new DashboardModel(dashboard, meta, contextSrv);
       },
       setCurrent: function(dashboard) {
         this.currentDashboard = dashboard;
