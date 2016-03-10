@@ -10,12 +10,12 @@ function (angular, $, _, moment) {
   var module = angular.module('grafana.services');
   module.factory('dashboardSrv', function()  {
 
-    function DashboardModel (data, meta, contextSrv) {
+    function DashboardModel (data, meta, signedInUserId) {
       if (!data) {
         data = {};
       }
 
-      this.signedInUser = contextSrv.user;
+      this.signedInUserId = signedInUserId;
 
       if (!data.id && data.version) {
         data.schemaVersion = data.version;
@@ -56,12 +56,15 @@ function (angular, $, _, moment) {
       meta.canDelete = meta.canDelete !== false;
 
       // authorize dashboard author to edit his/her own not editable dashboard
-      if (!this.editable && (this.signedInUser.id !== meta.authorId)) {
+      if (!this.editable && (this.signedInUserId !== meta.authorId)) {
         meta.canEdit = false;
         meta.canDelete = false;
         meta.canSave = false;
         this.hideControls = true;
       }
+
+      // add author id to dashboard attributes
+      this.authorId = meta.authorId || 0;
 
       this.meta = meta;
     };
@@ -403,8 +406,11 @@ function (angular, $, _, moment) {
     };
 
     return {
-      create: function(dashboard, meta, contextSrv) {
-        return new DashboardModel(dashboard, meta, contextSrv);
+      create: function(dashboard, meta, signedInUserId) {
+        if (!signedInUserId) {
+          signedInUserId = 0;
+        }
+        return new DashboardModel(dashboard, meta, signedInUserId);
       },
       setCurrent: function(dashboard) {
         this.currentDashboard = dashboard;

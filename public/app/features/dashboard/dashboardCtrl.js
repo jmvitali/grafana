@@ -39,7 +39,8 @@ function (angular, $, config) {
       $rootScope.performance.panelsInitialized = 0;
       $rootScope.performance.panelsRendered = 0;
 
-      var dashboard = dashboardSrv.create(data.dashboard, data.meta, contextSrv);
+      var signedInUserId = contextSrv.user.id;
+      var dashboard = dashboardSrv.create(data.dashboard, data.meta, signedInUserId);
       dashboardSrv.setCurrent(dashboard);
 
       // init services
