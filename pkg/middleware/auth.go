@@ -36,6 +36,14 @@ func getApiKey(c *Context) string {
 	return ""
 }
 
+func setRedirect(c *Context) {
+	if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != "" {
+		c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
+	} else {
+		c.Redirect(setting.AppSubUrl + "/login")
+	}
+}
+
 func accessForbidden(c *Context) {
 	if c.IsApiRequest() {
 		c.JsonApiErr(403, "Permission denied", nil)
@@ -43,11 +51,7 @@ func accessForbidden(c *Context) {
 	}
 
 	c.SetCookie("redirect_to", url.QueryEscape(setting.AppSubUrl+c.Req.RequestURI), 0, setting.AppSubUrl+"/")
-	if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != "" {
-		c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
-	} else {
-		c.Redirect(setting.AppSubUrl + "/login")
-	}
+	setRedirect(c)
 }
 
 func notAuthorized(c *Context) {
@@ -57,11 +61,7 @@ func notAuthorized(c *Context) {
 	}
 
 	c.SetCookie("redirect_to", url.QueryEscape(setting.AppSubUrl+c.Req.RequestURI), 0, setting.AppSubUrl+"/")
-	if setting.AuthAutoSignUpEnabled && setting.AuthAutoSignUpName != "" {
-		c.Redirect(setting.AppSubUrl + "/login/" + setting.AuthAutoSignUpName )
-	} else {
-		c.Redirect(setting.AppSubUrl + "/login")
-	}
+	setRedirect(c)
 }
 
 func RoleAuth(roles ...m.RoleType) macaron.Handler {

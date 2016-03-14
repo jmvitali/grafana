@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"net/http"
-    "crypto/tls"
+	"crypto/tls"
 	"golang.org/x/oauth2"
 
 	"github.com/grafana/grafana/pkg/bus"
@@ -34,27 +34,25 @@ func OAuthLogin(ctx *middleware.Context) {
 	if code == "" {
 		ctx.Redirect(connect.AuthCodeURL("", oauth2.AccessTypeOnline))
 		return
-	}    
+	}
 
-    // Retrieve OAuth information
-    info := setting.OAuthService.OAuthInfos[name]
-    
-    // Insecured certificat is allowed
-    if info.AllowInsecureCert {
-		cfg := &tls.Config{
+	// retrieve OAuth information
+	info := setting.OAuthService.OAuthInfos[name]
+
+	// insecured certificate is allowed
+	if info.AllowInsecureCert {
+		cfg := &tls.Config {
 			InsecureSkipVerify: true,
 		}
 
-		http.DefaultClient.Transport = &http.Transport{
+		http.DefaultClient.Transport = &http.Transport {
 			TLSClientConfig: cfg,
 		}
 
-		// Register Token URL as Broken Auth Header Provider
-		//   i.e.: Server which imnplements Auth Spec correctly    
+		// register TokenUrl as BrokenAuthHeaderProvider
+		//   i.e.: Server which implements Auth Spec correctly    
 		oauth2.RegisterBrokenAuthHeaderProvider(info.TokenUrl) 
-    }
-
-   
+	}   
 
 	// handle call back
 	token, err := connect.Exchange(oauth2.NoContext, code)
