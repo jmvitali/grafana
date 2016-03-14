@@ -13,7 +13,7 @@ import (
 	"golang.org/x/net/context"
 
 	"golang.org/x/oauth2"
-    "github.com/grafana/grafana/pkg/log"
+	"github.com/grafana/grafana/pkg/log"
 )
 
 type BasicUserInfo struct {
@@ -74,21 +74,21 @@ func NewOAuthService() {
 			Scopes:      info.Scopes,
 		}
 
-        // Cerberus.
+		// Cerberus.
 		if name == "cerberus" {
-            info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
-            setting.OAuthService.Cerberus = true
-            SocialMap["cerberus"] = &SocialCerberus{
+			info.AllowInsecureCert = sec.Key("allow_insecure_certificate").MustBool()
+			setting.OAuthService.Cerberus = true
+			SocialMap["cerberus"] = &SocialCerberus{
 				Config:               &config,
 				apiUrl:               info.ApiUrl,
 				allowSignup:          info.AllowSignup,
 			}
-            
-            log.Trace("Cerberus configuration loaded!")
-        }
 
-        setting.OAuthService.OAuthInfos[name] = info
-        
+			log.Trace("Cerberus configuration loaded!")
+		}
+
+		setting.OAuthService.OAuthInfos[name] = info
+
 		// GitHub.
 		if name == "github" {
 			setting.OAuthService.GitHub = true
